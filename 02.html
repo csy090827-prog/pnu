@@ -21,6 +21,7 @@
        - Temp Surge: Chart.js Area Chart (Goal: Change)
        - Correlation: Chart.js Scatter Plot (Goal: Relationships)
        - 2023 Analysis: HTML/CSS Grid with Unicode Icons (Goal: Organize) - NO SVG/Mermaid used.
+    4. Update: Added a "Home" button linked to index.html in the navigation bar.
     -->
 
     <script>
@@ -75,8 +76,14 @@
     <!-- Navigation / Header -->
     <nav class="sticky top-0 z-50 bg-climate-dark text-white shadow-lg backdrop-blur-md bg-opacity-90">
         <div class="container mx-auto px-6 py-4 flex justify-between items-center">
-            <h1 class="text-2xl font-black tracking-tighter">CLIMATE<span class="text-climate-red">MONITOR</span></h1>
-            <div class="hidden md:flex space-x-6 text-sm font-bold uppercase tracking-widest">
+            <div class="flex items-center space-x-4">
+                <a href="index.html" class="flex items-center space-x-2 bg-gray-800 hover:bg-gray-700 transition-colors px-3 py-1.5 rounded-lg border border-gray-700 group">
+                    <span class="text-lg group-hover:scale-110 transition-transform">🏠</span>
+                    <span class="text-xs font-bold uppercase tracking-widest">Home</span>
+                </a>
+                <h1 class="text-xl md:text-2xl font-black tracking-tighter">CLIMATE<span class="text-climate-red">MONITOR</span></h1>
+            </div>
+            <div class="hidden lg:flex space-x-6 text-sm font-bold uppercase tracking-widest">
                 <a href="#overview" class="hover:text-climate-blue transition-colors">Overview</a>
                 <a href="#trends" class="hover:text-climate-blue transition-colors">Trends</a>
                 <a href="#analysis" class="hover:text-climate-red transition-colors">The 2023 Spike</a>
@@ -164,7 +171,6 @@
                         </p>
                     </div>
                     <div class="bg-white p-6 rounded-2xl shadow-md flex-grow">
-                        <!-- Chart Container with responsive sizing -->
                         <div class="chart-container">
                             <canvas id="ghgChart"></canvas>
                         </div>
@@ -181,7 +187,6 @@
                         </p>
                     </div>
                     <div class="bg-white p-6 rounded-2xl shadow-md flex-grow">
-                        <!-- Chart Container with responsive sizing -->
                         <div class="chart-container">
                             <canvas id="tempChart"></canvas>
                         </div>
@@ -203,9 +208,7 @@
                 </p>
             </div>
 
-            <!-- Custom Diagram using Grid/Flex (NO Mermaid, NO SVG) -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <!-- Factor 1 -->
                 <div class="bg-gray-800 p-8 rounded-xl border-t-4 border-climate-blue transform hover:-translate-y-2 transition-transform">
                     <div class="text-5xl mb-6">🌊</div>
                     <h4 class="text-xl font-bold mb-3">엘니뇨 (El Niño)</h4>
@@ -214,7 +217,6 @@
                     </p>
                 </div>
 
-                <!-- Factor 2 -->
                 <div class="bg-gray-800 p-8 rounded-xl border-t-4 border-climate-green transform hover:-translate-y-2 transition-transform delay-100">
                     <div class="text-5xl mb-6">🌫️</div>
                     <h4 class="text-xl font-bold mb-3">누적된 온실효과</h4>
@@ -223,7 +225,6 @@
                     </p>
                 </div>
 
-                <!-- Factor 3 -->
                 <div class="bg-gray-800 p-8 rounded-xl border-t-4 border-climate-red transform hover:-translate-y-2 transition-transform delay-200">
                     <div class="text-5xl mb-6">🌡️</div>
                     <h4 class="text-xl font-bold mb-3">해양 열 흡수 한계</h4>
@@ -256,7 +257,6 @@
             </div>
             
             <div class="w-full md:w-2/3 bg-gray-50 p-6 rounded-2xl shadow-inner border border-gray-100">
-                <!-- Chart Container -->
                 <div class="chart-container">
                     <canvas id="correlationChart"></canvas>
                 </div>
@@ -293,26 +293,6 @@
         const methaneData = [1972, 1988, 2004, 2010, 2022];
         const tempData = [13.4, 13.5, 13.6, 14.6, 14.7];
 
-        // Utility: Label Wrapping Function
-        function wrapLabel(str, maxLen) {
-            if (str.length <= maxLen) return str;
-            const words = str.split(' ');
-            const lines = [];
-            let currentLine = words[0];
-
-            for (let i = 1; i < words.length; i++) {
-                if (currentLine.length + 1 + words[i].length <= maxLen) {
-                    currentLine += ' ' + words[i];
-                } else {
-                    lines.push(currentLine);
-                    currentLine = words[i];
-                }
-            }
-            lines.push(currentLine);
-            return lines;
-        }
-
-        // Shared Options for Tooltips (MANDATORY REQUIREMENT)
         const tooltipConfig = {
             callbacks: {
                 title: function(tooltipItems) {
@@ -327,7 +307,7 @@
             }
         };
 
-        // --- Chart 1: GHG Trends (Multi-Axis Line) ---
+        // --- Chart 1: GHG Trends ---
         const ctxGHG = document.getElementById('ghgChart').getContext('2d');
         new Chart(ctxGHG, {
             type: 'line',
@@ -337,65 +317,39 @@
                     {
                         label: '이산화탄소 (ppm)',
                         data: co2Data,
-                        borderColor: '#2979FF', // Climate Blue
+                        borderColor: '#2979FF',
                         backgroundColor: '#2979FF',
                         yAxisID: 'y',
                         tension: 0.3,
-                        pointRadius: 5,
-                        pointHoverRadius: 7
+                        pointRadius: 5
                     },
                     {
                         label: '메탄 (ppb)',
                         data: methaneData,
-                        borderColor: '#00E676', // Climate Green
+                        borderColor: '#00E676',
                         backgroundColor: '#00E676',
                         yAxisID: 'y1',
                         borderDash: [5, 5],
                         tension: 0.3,
-                        pointRadius: 5,
-                        pointHoverRadius: 7
+                        pointRadius: 5
                     }
                 ]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
-                interaction: {
-                    mode: 'index',
-                    intersect: false,
-                },
-                plugins: {
-                    legend: { position: 'top' },
-                    tooltip: tooltipConfig
-                },
+                plugins: { tooltip: tooltipConfig },
                 scales: {
-                    y: {
-                        type: 'linear',
-                        display: true,
-                        position: 'left',
-                        title: { display: true, text: 'CO2 (ppm)' },
-                        grid: { color: '#f3f4f6' }
-                    },
-                    y1: {
-                        type: 'linear',
-                        display: true,
-                        position: 'right',
-                        title: { display: true, text: 'Methane (ppb)' },
-                        grid: { drawOnChartArea: false }
-                    },
-                    x: {
-                        grid: { display: false }
-                    }
+                    y: { position: 'left', title: { display: true, text: 'CO2 (ppm)' } },
+                    y1: { position: 'right', title: { display: true, text: 'Methane (ppb)' }, grid: { drawOnChartArea: false } }
                 }
             }
         });
 
-        // --- Chart 2: Temperature Trend (Area Chart) ---
+        // --- Chart 2: Temperature Trend ---
         const ctxTemp = document.getElementById('tempChart').getContext('2d');
-        
-        // Create gradient
         const gradientTemp = ctxTemp.createLinearGradient(0, 0, 0, 400);
-        gradientTemp.addColorStop(0, 'rgba(255, 23, 68, 0.5)'); // Red transparent
+        gradientTemp.addColorStop(0, 'rgba(255, 23, 68, 0.5)');
         gradientTemp.addColorStop(1, 'rgba(255, 23, 68, 0.0)');
 
         new Chart(ctxTemp, {
@@ -405,47 +359,26 @@
                 datasets: [{
                     label: '평균 기온 (°C)',
                     data: tempData,
-                    borderColor: '#FF1744', // Climate Red
+                    borderColor: '#FF1744',
                     backgroundColor: gradientTemp,
                     fill: true,
                     tension: 0.4,
-                    pointBackgroundColor: '#FFFFFF',
-                    pointBorderColor: '#FF1744',
-                    pointBorderWidth: 3,
-                    pointRadius: 6,
-                    pointHoverRadius: 9
+                    pointRadius: 6
                 }]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
-                plugins: {
-                    legend: { display: false },
-                    tooltip: tooltipConfig,
-                    annotation: {
-                        // Ideally we'd use chartjs-plugin-annotation, but sticking to core for simplicity/compatibility
-                    }
-                },
-                scales: {
-                    y: {
-                        beginAtZero: false,
-                        suggestedMin: 13.0,
-                        suggestedMax: 15.0,
-                        grid: { color: '#f3f4f6' }
-                    },
-                    x: {
-                        grid: { display: false }
-                    }
-                }
+                plugins: { tooltip: tooltipConfig },
+                scales: { y: { suggestedMin: 13.0, suggestedMax: 15.0 } }
             }
         });
 
-        // --- Chart 3: Correlation (Scatter Plot) ---
-        // Preparing scatter data: {x: CO2, y: Temp}
+        // --- Chart 3: Correlation ---
         const scatterData = co2Data.map((co2, index) => ({
             x: co2,
             y: tempData[index],
-            year: years[index] // Custom property for tooltip
+            year: years[index]
         }));
 
         const ctxCorr = document.getElementById('correlationChart').getContext('2d');
@@ -455,48 +388,27 @@
                 datasets: [{
                     label: 'CO2 vs 기온 상관관계',
                     data: scatterData,
-                    backgroundColor: '#263238', // Dark
+                    backgroundColor: '#263238',
                     borderColor: '#2979FF',
-                    borderWidth: 1,
-                    pointRadius: 8,
-                    pointHoverRadius: 10
+                    pointRadius: 8
                 }]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
                 plugins: {
-                    legend: { display: false },
                     tooltip: {
                         callbacks: {
-                            title: function() { return 'Correlation Point'; }, // Simple title
-                            label: function(context) {
-                                const pt = context.raw;
-                                return `${pt.year}: CO2 ${pt.x}ppm / ${pt.y}°C`;
-                            }
+                            label: (context) => `${context.raw.year}: CO2 ${context.raw.x}ppm / ${context.raw.y}°C`
                         }
                     }
                 },
                 scales: {
-                    x: {
-                        type: 'linear',
-                        position: 'bottom',
-                        title: { display: true, text: '이산화탄소 농도 (ppm)' },
-                        grid: { display: false }
-                    },
-                    y: {
-                        title: { display: true, text: '평균 기온 (°C)' },
-                        grid: { color: '#f3f4f6' }
-                    }
+                    x: { title: { display: true, text: '이산화탄소 (ppm)' } },
+                    y: { title: { display: true, text: '기온 (°C)' } }
                 }
             }
         });
     </script>
 </body>
-<!-- 
-    NO MERMAID JS USED.
-    NO SVG GRAPHICS USED.
-    ALL CHARTS RENDERED VIA CANVAS (CHART.JS).
-    CHART CONTAINERS STYLED WITH TAILWIND & CUSTOM CSS FOR RESPONSIVENESS.
--->
 </html>
