@@ -3,226 +3,259 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>대한민국 소득 분포 대시보드 (2019-2023)</title>
+    <title>소득 데이터 분석 리포트</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Pretendard:wght@400;600;700&display=swap');
-        body { font-family: 'Pretendard', sans-serif; }
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap');
+        body { font-family: 'Noto Sans KR', sans-serif; background-color: #f8fafc; }
+        .chart-container { position: relative; height: 400px; width: 100%; }
+        .card { transition: transform 0.2s; }
+        .card:hover { transform: translateY(-5px); }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-900">
+<body class="text-slate-800">
 
-    <div class="min-h-screen p-4 md:p-8">
-        <!-- Header -->
-        <header class="max-w-7xl mx-auto mb-8">
-            <h1 class="text-3xl font-bold text-slate-800 mb-2 flex items-center gap-2">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-                </svg>
-                대한민국 소득 분포 및 추이 리포트 (2019-2023)
-            </h1>
-            <p class="text-slate-500">평균소득, 중위소득 및 소득 경계값 데이터 시각화 분석</p>
-        </header>
+    <!-- Navigation -->
+    <nav class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center">
+                <div class="flex items-center gap-2 text-blue-600 font-bold text-xl">
+                    <i class="fa-solid fa-chart-line"></i>
+                    <span>IncomeInsights KR</span>
+                </div>
+                <div class="hidden md:flex space-x-8 text-sm font-medium">
+                    <a href="#summary" class="hover:text-blue-600">요약</a>
+                    <a href="#charts" class="hover:text-blue-600">추이 분석</a>
+                    <a href="#distribution" class="hover:text-blue-600">소득 분포</a>
+                    <a href="#table" class="hover:text-blue-600">데이터 시트</a>
+                </div>
+            </div>
+        </div>
+    </nav>
 
-        <main class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6">
-            
-            <!-- Summary Cards -->
-            <div class="md:col-span-3 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
-                    <div class="text-sm font-medium text-slate-500 mb-1">평균소득 (2023)</div>
-                    <div class="text-2xl font-bold text-blue-600">363 <span class="text-sm font-normal text-slate-400">만원</span></div>
-                    <div class="mt-2 text-xs text-green-600 flex items-center gap-1">
-                        ▲ 2019년 대비 17.5% 상승
+    <!-- Header -->
+    <header class="bg-gradient-to-r from-blue-700 to-indigo-800 text-white py-16">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <h1 class="text-4xl md:text-5xl font-bold mb-4">2019-2023 평균 및 중위소득 분석</h1>
+            <p class="text-blue-100 text-lg max-w-2xl mx-auto">국가 통계 데이터를 기반으로 한 대한민국 소득 구조와 격차에 대한 심층 보고서입니다.</p>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 py-12 space-y-16">
+
+        <!-- Summary Cards -->
+        <section id="summary" class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="card bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="bg-blue-100 p-3 rounded-full text-blue-600"><i class="fa-solid fa-wallet fa-lg"></i></div>
+                    <h3 class="font-bold text-slate-500">2023 평균소득</h3>
+                </div>
+                <p class="text-3xl font-bold">363만 원</p>
+                <p class="text-sm text-green-600 mt-2"><i class="fa-solid fa-arrow-up"></i> 2019년 대비 17.5% 증가</p>
+            </div>
+            <div class="card bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="bg-indigo-100 p-3 rounded-full text-indigo-600"><i class="fa-solid fa-scale-balanced fa-lg"></i></div>
+                    <h3 class="font-bold text-slate-500">2023 중위소득</h3>
+                </div>
+                <p class="text-3xl font-bold">278만 원</p>
+                <p class="text-sm text-green-600 mt-2"><i class="fa-solid fa-arrow-up"></i> 2019년 대비 18.8% 증가</p>
+            </div>
+            <div class="card bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="bg-amber-100 p-3 rounded-full text-amber-600"><i class="fa-solid fa-arrows-left-right fa-lg"></i></div>
+                    <h3 class="font-bold text-slate-500">평균-중위 격차</h3>
+                </div>
+                <p class="text-3xl font-bold">85만 원</p>
+                <p class="text-sm text-red-500 mt-2"><i class="fa-solid fa-warning"></i> 격차 지속 확대 중</p>
+            </div>
+        </section>
+
+        <!-- Charts Section -->
+        <section id="charts" class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div class="bg-white p-8 rounded-2xl shadow-sm border border-slate-100">
+                <h3 class="text-xl font-bold mb-6">소득 추이 (평균 vs 중위)</h3>
+                <div class="chart-container">
+                    <canvas id="mainChart"></canvas>
+                </div>
+                <div class="mt-6 p-4 bg-slate-50 rounded-lg text-sm leading-relaxed">
+                    <p><strong>전문가 분석:</strong> 2019년부터 2023년까지 평균소득과 중위소득은 5년 연속 꾸준히 상승하는 우상향 추세를 보였습니다. 특히 2021년~2022년 구간에서 가장 가파른 상승폭을 기록했습니다.</p>
+                </div>
+            </div>
+
+            <div class="bg-white p-8 rounded-2xl shadow-sm border border-slate-100">
+                <h3 class="text-xl font-bold mb-6">분위별 소득 경계값 (P20 ~ P80)</h3>
+                <div class="chart-container">
+                    <canvas id="percentileChart"></canvas>
+                </div>
+                <div class="mt-6 p-4 bg-slate-50 rounded-lg text-sm leading-relaxed">
+                    <p><strong>전문가 분석:</strong> 하위 20%(P20)부터 상위 20%(P80)까지 모든 구간의 소득이 증가했습니다. 다만, 최상위 그룹(P80)의 상승액이 하위 그룹보다 절대적으로 커지면서 소득 불균형에 대한 우려가 존재합니다.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Insights Detail -->
+        <section id="distribution" class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+            <div class="space-y-6">
+                <h2 class="text-3xl font-bold">심층 데이터 분석</h2>
+                <div class="space-y-4">
+                    <div class="border-l-4 border-blue-500 pl-4">
+                        <h4 class="font-bold text-lg">하위 20%의 성장과 한계</h4>
+                        <p class="text-slate-600 mt-1 italic">"2019년 116에서 2023년 140으로 꾸준히 상승했습니다. 하지만 물가 상승률과 최저 임금 수준을 고려하면 이러한 수치는 여전히 매우 낮은 수준으로 평가됩니다."</p>
+                    </div>
+                    <div class="border-l-4 border-indigo-500 pl-4">
+                        <h4 class="font-bold text-lg">소득 격차의 확대</h4>
+                        <p class="text-slate-600 mt-1 italic">"평균소득과 상위 구간인 P80 간의 절대적 금액 격차가 139에서 155로 벌어졌습니다. 소득 총량은 커지고 있으나 그룹 간의 차이는 계속해서 확대되는 흐름입니다."</p>
+                    </div>
+                    <div class="border-l-4 border-amber-500 pl-4">
+                        <h4 class="font-bold text-lg">중위소득 비중의 안정성</h4>
+                        <p class="text-slate-600 mt-1 italic">"중위소득 50%~150% 구간에 속하는 비중이 50.4%에서 51.4%로 소폭 상승하며 중간층의 두께는 일정 수준 유지되고 있는 것으로 나타납니다."</p>
                     </div>
                 </div>
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
-                    <div class="text-sm font-medium text-slate-500 mb-1">중위소득 (2023)</div>
-                    <div class="text-2xl font-bold text-indigo-600">278 <span class="text-sm font-normal text-slate-400">만원</span></div>
-                    <div class="mt-2 text-xs text-green-600 flex items-center gap-1">
-                        ▲ 2019년 대비 18.8% 상승
-                    </div>
-                </div>
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
-                    <div class="text-sm font-medium text-slate-500 mb-1">P80 경계값 (2023)</div>
-                    <div class="text-2xl font-bold text-slate-800">518 <span class="text-sm font-normal text-slate-400">만원</span></div>
-                    <div class="mt-2 text-xs text-slate-400">상위 20% 진입 기준액</div>
-                </div>
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
-                    <div class="text-sm font-medium text-slate-500 mb-1">중산층 비중 (2023)</div>
-                    <div class="text-2xl font-bold text-emerald-600">51.4 <span class="text-sm font-normal text-slate-400">%</span></div>
-                    <div class="mt-2 text-xs text-green-600 flex items-center gap-1">
-                        ▲ 5년간 완만한 증가 추세
-                    </div>
-                </div>
             </div>
-
-            <!-- Main Trend Chart -->
-            <div class="md:col-span-2 bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
-                <h2 class="text-lg font-bold flex items-center gap-2 mb-6">
-                    연도별 소득 추이 (평균 vs 중위 vs 경계값)
-                </h2>
-                <div class="h-80">
-                    <canvas id="trendChart"></canvas>
-                </div>
+            <div class="bg-white p-8 rounded-2xl shadow-sm border border-slate-100 flex flex-col items-center">
+                 <h3 class="text-lg font-bold mb-4 text-center">소득 구성 비율 (2023년 기준)</h3>
+                 <div class="w-full max-w-[300px]">
+                     <canvas id="distributionPie"></canvas>
+                 </div>
+                 <div class="mt-4 text-xs text-slate-400">데이터 출처: 업로드된 통계 자료</div>
             </div>
+        </section>
 
-            <!-- Income Distribution Pie Chart -->
-            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
-                <div class="flex justify-between items-center mb-6">
-                    <h2 class="text-lg font-bold">소득 계층별 비중</h2>
-                    <select id="yearSelect" class="bg-slate-50 border border-slate-200 text-sm rounded-lg p-1 px-2 outline-none">
-                        <option value="2023">2023년</option>
-                        <option value="2022">2022년</option>
-                        <option value="2021">2021년</option>
-                        <option value="2020">2020년</option>
-                        <option value="2019">2019년</option>
-                    </select>
-                </div>
-                <div class="h-64 flex justify-center">
-                    <canvas id="distributionChart"></canvas>
-                </div>
-                <div id="pieLegend" class="space-y-3 mt-4">
-                    <!-- Legend will be generated by JS -->
-                </div>
+        <!-- Data Table -->
+        <section id="table" class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+            <div class="p-6 border-b border-slate-100 bg-slate-50 flex justify-between items-center">
+                <h3 class="text-xl font-bold">연도별 상세 통계 데이터</h3>
+                <span class="text-xs text-slate-500">(단위: 만 원, %)</span>
             </div>
-
-            <!-- Analysis Report -->
-            <div class="md:col-span-3 bg-white p-8 rounded-2xl shadow-sm border border-slate-100">
-                <h2 class="text-xl font-bold mb-6 flex items-center gap-2 border-b pb-4">
-                    주요 분석 인사이트
-                </h2>
-                
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <section class="space-y-4">
-                        <div class="bg-rose-50 p-4 rounded-xl border-l-4 border-rose-400">
-                            <h3 class="font-bold text-rose-800 mb-2">하위 20% 소득 분석 (P20)</h3>
-                            <p class="text-slate-700 leading-relaxed text-sm">
-                                2019년 116만원에서 2023년 140만원으로 꾸준히 상승했습니다. 
-                                기준선 자체가 높아졌으나, 물가 상승률을 고려하면 절대적인 수치는 여전히 낮습니다.
-                            </p>
-                        </div>
-                        <div class="bg-blue-50 p-4 rounded-xl border-l-4 border-blue-400">
-                            <h3 class="font-bold text-blue-800 mb-2">평균소득 및 P80 격차 분석</h3>
-                            <p class="text-slate-700 leading-relaxed text-sm">
-                                평균과 상위 구간(P80) 간의 <strong>절대적인 금액 격차는 139만원에서 155만원으로 확대</strong>되었습니다. 
-                                전반적인 성장은 있으나 격차는 확대되는 흐름입니다.
-                            </p>
-                        </div>
-                    </section>
-
-                    <section class="space-y-4">
-                        <div class="bg-indigo-50 p-4 rounded-xl border-l-4 border-indigo-400">
-                            <h3 class="font-bold text-indigo-800 mb-2">중위소득 추이 (P50)</h3>
-                            <p class="text-slate-700 leading-relaxed text-sm">
-                                중위소득은 5년간 매년 상승했습니다. 중위소득 50%~150%에 해당하는 중산층 비중은 약 51% 수준을 유지하고 있습니다.
-                            </p>
-                        </div>
-                        <div class="bg-slate-100 p-4 rounded-xl border-l-4 border-slate-400">
-                            <h3 class="font-bold text-slate-800 mb-2">종합 시사점</h3>
-                            <ul class="list-disc list-inside text-sm text-slate-600 space-y-2">
-                                <li>전 구간 소득 지표의 연속적 동반 상승 확인</li>
-                                <li>상위 소득자와 중위/하위 소득자 간의 절대적 금액 차이 확대</li>
-                                <li>소득 분포의 균형성보다 절대적 규모의 성장이 두드러짐</li>
-                            </ul>
-                        </div>
-                    </section>
-                </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead class="bg-slate-50 text-slate-500 uppercase text-xs font-semibold">
+                        <tr>
+                            <th class="px-6 py-4">항목</th>
+                            <th class="px-6 py-4">2019</th>
+                            <th class="px-6 py-4">2020</th>
+                            <th class="px-6 py-4">2021</th>
+                            <th class="px-6 py-4">2022</th>
+                            <th class="px-6 py-4">2023</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100">
+                        <tr>
+                            <td class="px-6 py-4 font-medium">평균소득</td>
+                            <td class="px-6 py-4">309</td><td class="px-6 py-4">320</td><td class="px-6 py-4">333</td><td class="px-6 py-4">353</td><td class="px-6 py-4 font-bold">363</td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4 font-medium">중위소득</td>
+                            <td class="px-6 py-4">234</td><td class="px-6 py-4">242</td><td class="px-6 py-4">250</td><td class="px-6 py-4">267</td><td class="px-6 py-4 font-bold">278</td>
+                        </tr>
+                        <tr class="bg-blue-50/30">
+                            <td class="px-6 py-4 font-medium text-blue-700">중위 50~150% 미만 (%)</td>
+                            <td class="px-6 py-4">50.4</td><td class="px-6 py-4">50.7</td><td class="px-6 py-4">50.5</td><td class="px-6 py-4">51.1</td><td class="px-6 py-4 font-bold text-blue-700">51.4</td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4 font-medium">하위 20% 경계(P20)</td>
+                            <td class="px-6 py-4">116</td><td class="px-6 py-4">122</td><td class="px-6 py-4">125</td><td class="px-6 py-4">135</td><td class="px-6 py-4">140</td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4 font-medium">하위 80% 경계(P80)</td>
+                            <td class="px-6 py-4">448</td><td class="px-6 py-4">462</td><td class="px-6 py-4">478</td><td class="px-6 py-4">503</td><td class="px-6 py-4">518</td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
-        </main>
+        </section>
 
-        <footer class="max-w-7xl mx-auto mt-12 mb-8 text-center text-slate-400 text-xs">
-            © 2026 Income Distribution Analysis Project. 모든 데이터는 제공된 분석 자료를 기반으로 작성되었습니다.
-        </footer>
-    </div>
+    </main>
+
+    <footer class="bg-slate-900 text-slate-400 py-12 mt-20">
+        <div class="max-w-7xl mx-auto px-4 text-center space-y-4">
+            <p>© 2026 소득 분석 프로젝트 - 데이터 기반 통계 리포트</p>
+            <div class="flex justify-center gap-6 text-sm">
+                <span>분석자: 송가인, 최인영</span>
+                <span>자료제공: 통계 데이터</span>
+            </div>
+        </div>
+    </footer>
 
     <script>
-        // Data definition
-        const incomeData = {
-            years: ['2019', '2020', '2021', '2022', '2023'],
-            avg: [309, 320, 333, 353, 363],
-            mid: [234, 242, 250, 267, 278],
-            p80: [448, 462, 478, 503, 518],
-            p20: [116, 122, 125, 135, 140],
-            distribution: {
-                '2019': { low: 20.1, middle: 50.4, high: 29.6 },
-                '2020': { low: 19.9, middle: 50.7, high: 29.4 },
-                '2021': { low: 20.1, middle: 50.5, high: 29.5 },
-                '2022': { low: 19.9, middle: 51.1, high: 29.0 },
-                '2023': { low: 19.9, middle: 51.4, high: 28.6 }
-            }
-        };
-
-        // Trend Chart
-        const trendCtx = document.getElementById('trendChart').getContext('2d');
-        const trendChart = new Chart(trendCtx, {
+        const years = ['2019', '2020', '2021', '2022', '2023'];
+        
+        // Main Trend Chart
+        const mainCtx = document.getElementById('mainChart').getContext('2d');
+        new Chart(mainCtx, {
             type: 'line',
             data: {
-                labels: incomeData.years,
+                labels: years,
                 datasets: [
-                    { label: '평균소득', data: incomeData.avg, borderColor: '#2563eb', backgroundColor: '#2563eb', borderWidth: 3, tension: 0.3 },
-                    { label: '중위소득', data: incomeData.mid, borderColor: '#6366f1', borderDash: [5, 5], borderWidth: 2, tension: 0.3 },
-                    { label: '하위 80% (P80)', data: incomeData.p80, borderColor: '#94a3b8', borderWidth: 2, tension: 0.3 },
-                    { label: '하위 20% (P20)', data: incomeData.p20, borderColor: '#f43f5e', borderWidth: 2, tension: 0.3 }
+                    {
+                        label: '평균소득',
+                        data: [309, 320, 333, 353, 363],
+                        borderColor: '#2563eb',
+                        backgroundColor: '#2563eb',
+                        tension: 0.3,
+                        borderWidth: 3,
+                        fill: false
+                    },
+                    {
+                        label: '중위소득',
+                        data: [234, 242, 250, 267, 278],
+                        borderColor: '#6366f1',
+                        backgroundColor: '#6366f1',
+                        tension: 0.3,
+                        borderWidth: 3,
+                        fill: false
+                    }
                 ]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
                 plugins: { legend: { position: 'bottom' } },
-                scales: { y: { beginAtZero: false, grid: { display: false } }, x: { grid: { display: false } } }
+                scales: { y: { beginAtZero: false, title: { display: true, text: '만 원' } } }
             }
         });
 
-        // Distribution Pie Chart
-        let distributionChart;
-        function updatePieChart(year) {
-            const data = incomeData.distribution[year];
-            const pieCtx = document.getElementById('distributionChart').getContext('2d');
-            
-            const chartData = {
-                labels: ['중위 50% 미만', '중위 50%~150%', '중위 150% 이상'],
-                datasets: [{
-                    data: [data.low, data.middle, data.high],
-                    backgroundColor: ['#f87171', '#60a5fa', '#34d399'],
-                    borderWidth: 0
-                }]
-            };
-
-            if (distributionChart) {
-                distributionChart.destroy();
+        // Percentile Comparison Chart
+        const percCtx = document.getElementById('percentileChart').getContext('2d');
+        new Chart(percCtx, {
+            type: 'bar',
+            data: {
+                labels: years,
+                datasets: [
+                    { label: 'P20 (하위 20%)', data: [116, 122, 125, 135, 140], backgroundColor: '#94a3b8' },
+                    { label: 'P40', data: [198, 204, 210, 225, 236], backgroundColor: '#cbd5e1' },
+                    { label: 'P60', data: [282, 291, 300, 318, 330], backgroundColor: '#3b82f6' },
+                    { label: 'P80 (상위 20%)', data: [448, 462, 478, 503, 518], backgroundColor: '#1e40af' }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { position: 'bottom' } },
+                scales: { y: { title: { display: true, text: '만 원' } } }
             }
+        });
 
-            distributionChart = new Chart(pieCtx, {
-                type: 'doughnut',
-                data: chartData,
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    cutout: '60%',
-                    plugins: { legend: { display: false } }
-                }
-            });
-
-            // Update Legend UI
-            const legendEl = document.getElementById('pieLegend');
-            legendEl.innerHTML = chartData.labels.map((label, i) => `
-                <div class="flex justify-between items-center text-sm">
-                    <div class="flex items-center gap-2 text-slate-600">
-                        <div class="w-3 h-3 rounded-full" style="background-color: ${chartData.datasets[0].backgroundColor[i]}"></div>
-                        ${label}
-                    </div>
-                    <div class="font-semibold">${chartData.datasets[0].data[i]}%</div>
-                </div>
-            `).join('');
-        }
-
-        // Init
-        updatePieChart('2023');
-
-        // Event Listener
-        document.getElementById('yearSelect').addEventListener('change', (e) => {
-            updatePieChart(e.target.value);
+        // Distribution Pie Chart (2023)
+        const pieCtx = document.getElementById('distributionPie').getContext('2d');
+        new Chart(pieCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['50% 미만', '50% ~ 150%', '150% 이상'],
+                datasets: [{
+                    data: [19.9, 51.4, 28.6],
+                    backgroundColor: ['#ef4444', '#3b82f6', '#10b981'],
+                    hoverOffset: 10
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: { legend: { position: 'bottom' } },
+                cutout: '60%'
+            }
         });
     </script>
 </body>
