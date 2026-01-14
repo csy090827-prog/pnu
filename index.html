@@ -34,12 +34,10 @@
         .light body { background-color: #f8faf5; }
         .dark body { background-color: #0f172a; }
 
-        /* 라이트모드 그라데이션 - 채도를 약간 조절하여 가독성 확보 */
         .light .gradient-bg {
             background: linear-gradient(135deg, #a3e635 0%, #16a34a 100%);
         }
 
-        /* 다크모드 그라데이션 */
         .dark .gradient-bg {
             background: linear-gradient(135deg, #1e3a8a 0%, #0f172a 100%);
         }
@@ -78,7 +76,6 @@
             z-index: 50;
         }
 
-        /* 텍스트 가독성을 위한 레이어 */
         .text-shadow-sm {
             text-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
@@ -93,7 +90,6 @@
 
     <!-- Hero Section -->
     <header class="relative overflow-hidden h-screen flex items-center justify-center gradient-bg transition-colors duration-500">
-        <!-- Decorative Elements -->
         <div class="absolute inset-0 opacity-20">
             <svg class="h-full w-full" preserveAspectRatio="none" viewBox="0 0 100 100">
                 <circle cx="10" cy="10" r="15" fill="currentColor" class="text-yellow-400 dark:text-blue-600" />
@@ -103,7 +99,6 @@
         </div>
         
         <div class="container mx-auto px-6 relative z-10 text-center">
-            <!-- 사용자 이름 강조 -->
             <div class="mb-6">
                 <span class="text-3xl md:text-4xl font-black text-yellow-300 dark:text-cyan-300 tracking-tighter bg-black/30 px-8 py-3 rounded-2xl backdrop-blur-md shadow-xl border border-white/20 inline-block">
                     남성여자고등학교 최수연
@@ -137,7 +132,7 @@
                 </div>
                 <div class="mt-8 md:mt-0 text-right">
                     <p class="text-slate-600 dark:text-slate-400 text-xl font-bold italic mb-1">"데이터는 거짓말을 하지 않는다"</p>
-                    <p class="text-slate-400 dark:text-slate-500 font-medium">남성여고 최수연의 5가지 심층 분석</p>
+                    <p class="text-slate-400 dark:text-slate-500 font-medium">남성여고 최수연의 6가지 심층 분석</p>
                 </div>
             </div>
 
@@ -213,14 +208,31 @@
 
                 <!-- Project 05 -->
                 <a href="05.html" class="group">
-                    <div class="bg-slate-900 dark:bg-black rounded-[2rem] overflow-hidden card-hover border-none flex flex-col h-full shadow-xl">
-                        <div class="h-56 bg-red-600 flex items-center justify-center relative">
-                            <i class="fab fa-youtube text-8xl text-white drop-shadow-2xl"></i>
-                            <div class="absolute top-6 left-6 bg-white text-black px-4 py-1 rounded-full text-xs font-black">#05 AI ETHICS</div>
+                    <div class="bg-white dark:bg-slate-800 rounded-[2rem] overflow-hidden card-hover flex flex-col h-full shadow-sm">
+                        <div class="h-56 bg-pink-500 dark:bg-pink-700 flex items-center justify-center relative">
+                            <i class="fas fa-music text-7xl text-white drop-shadow-lg group-hover:scale-110 transition-transform"></i>
+                            <div class="absolute top-6 left-6 bg-black text-white px-4 py-1 rounded-full text-xs font-black">#05 K-POP</div>
                         </div>
                         <div class="p-10">
-                            <h3 class="text-2xl font-black mb-4 text-white">AI 윤리 유튜브 콘텐츠 분석</h3>
-                            <p class="text-slate-400 dark:text-slate-500 mb-8 leading-relaxed font-medium">유튜브 상의 담론 데이터를 활용해 인공지능 윤리에 대한 대중적 인식 변화를 분석했습니다.</p>
+                            <h3 class="text-2xl font-black mb-4 text-slate-900 dark:text-pink-200">케이팝데몬헌터스 댓글 분석</h3>
+                            <p class="text-slate-600 dark:text-slate-400 mb-8 leading-relaxed font-medium">유튜브 채널의 댓글 데이터를 수집하여 팬덤의 반응과 키워드를 분석했습니다.</p>
+                            <span class="text-pink-600 dark:text-pink-400 font-black flex items-center group-hover:gap-4 transition-all">
+                                자세히 보기 <i class="fas fa-arrow-right ml-2"></i>
+                            </span>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- Project 06 (New) -->
+                <a href="06.html" class="group">
+                    <div class="bg-slate-900 dark:bg-black rounded-[2rem] overflow-hidden card-hover border-none flex flex-col h-full shadow-xl">
+                        <div class="h-56 bg-red-600 flex items-center justify-center relative">
+                            <i class="fab fa-youtube text-8xl text-white drop-shadow-2xl group-hover:scale-110 transition-transform"></i>
+                            <div class="absolute top-6 left-6 bg-white text-black px-4 py-1 rounded-full text-xs font-black">#06 AI ETHICS</div>
+                        </div>
+                        <div class="p-10">
+                            <h3 class="text-2xl font-black mb-4 text-white">AI 윤리 유튜브 분석</h3>
+                            <p class="text-slate-400 dark:text-slate-500 mb-8 leading-relaxed font-medium">인공지능 윤리에 대한 유튜브 담론을 시각화하고 대중적 인식 변화를 추적했습니다.</p>
                             <span class="text-yellow-400 dark:text-blue-400 font-black flex items-center group-hover:gap-4 transition-all">
                                 자세히 보기 <i class="fas fa-arrow-right ml-2"></i>
                             </span>
