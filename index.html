@@ -12,11 +12,24 @@
             theme: {
                 extend: {
                     colors: {
-                        'deep-green': '#064e3b',
-                        'text-main': '#1a2e05',
-                        'dark-bg': '#0f172a',
-                        'dark-card': '#1e293b',
-                        'dark-accent': '#38bdf8'
+                        'sky-day': '#e0f2fe',
+                        'sky-deep': '#0ea5e9',
+                        'space-night': '#020617',
+                        'space-accent': '#38bdf8'
+                    },
+                    animation: {
+                        'twinkle': 'twinkle 4s ease-in-out infinite',
+                        'float': 'float 8s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        twinkle: {
+                            '0%, 100%': { opacity: 0.2, transform: 'scale(0.8)' },
+                            '50%': { opacity: 0.8, transform: 'scale(1.2)' },
+                        },
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0) rotate(0deg)' },
+                            '50%': { transform: 'translateY(-20px) rotate(2deg)' },
+                        }
                     }
                 }
             }
@@ -28,32 +41,57 @@
         body {
             font-family: 'Pretendard', sans-serif;
             scroll-behavior: smooth;
-            transition: background-color 0.3s ease;
+            transition: background-color 0.5s ease, color 0.5s ease;
         }
 
-        .light body { background-color: #f8faf5; }
-        .dark body { background-color: #0f172a; }
-
-        .light .gradient-bg {
-            background: linear-gradient(135deg, #a3e635 0%, #16a34a 100%);
+        /* Hero Section Base */
+        .hero-space {
+            position: relative;
+            overflow: hidden;
+            transition: background 0.7s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .dark .gradient-bg {
-            background: linear-gradient(135deg, #1e3a8a 0%, #0f172a 100%);
+        /* Light Mode: Daytime Sky */
+        .light .hero-space {
+            background: linear-gradient(180deg, #bae6fd 0%, #f0f9ff 100%);
+        }
+
+        /* Dark Mode: Night Universe */
+        .dark .hero-space {
+            background: radial-gradient(circle at center, #1e1b4b 0%, #020617 100%);
+        }
+
+        .star {
+            position: absolute;
+            border-radius: 50%;
+            pointer-events: none;
+            transition: background 0.5s ease;
+        }
+
+        /* Light Mode Stars: Blueish/White */
+        .light .star { 
+            background: #0ea5e9; 
+            box-shadow: 0 0 8px rgba(14, 165, 233, 0.4);
+        }
+
+        /* Dark Mode Stars: Golden/White */
+        .dark .star { 
+            background: #fef08a; 
+            box-shadow: 0 0 10px rgba(254, 240, 138, 0.6);
         }
 
         .card-hover {
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            border: 1px solid rgba(0,0,0,0.05);
+            border: 1px solid transparent;
         }
 
         .card-hover:hover {
-            transform: translateY(-12px);
+            transform: translateY(-15px);
         }
 
         .light .card-hover:hover {
-            box-shadow: 0 25px 50px -12px rgba(22, 101, 52, 0.15);
-            border-color: #22c55e;
+            box-shadow: 0 25px 50px -12px rgba(14, 165, 233, 0.15);
+            border-color: #7dd3fc;
         }
 
         .dark .card-hover:hover {
@@ -61,146 +99,158 @@
             border-color: #38bdf8;
         }
 
-        .animate-spin-slow {
-            animation: spin 12s linear infinite;
-        }
-        @keyframes spin {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-
         .theme-toggle {
             position: fixed;
             top: 2rem;
             right: 2rem;
-            z-index: 50;
+            z-index: 100;
         }
 
-        .text-shadow-sm {
-            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        .text-glow {
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
         }
     </style>
 </head>
-<body class="text-slate-900 dark:text-slate-100">
+<body class="text-slate-900 dark:text-slate-100 bg-white dark:bg-slate-950">
 
-    <!-- Theme Toggle Button -->
-    <button onclick="toggleTheme()" class="theme-toggle bg-white dark:bg-slate-800 p-4 rounded-full shadow-2xl border-2 border-green-600 dark:border-blue-400 transition-all hover:scale-110 active:scale-95">
-        <i id="theme-icon" class="fas fa-moon text-green-700 dark:text-blue-400 text-xl"></i>
+    <!-- Theme Toggle -->
+    <button onclick="toggleTheme()" class="theme-toggle bg-white/80 dark:bg-slate-800/80 backdrop-blur-md p-4 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-700 transition-all hover:scale-110 active:scale-95">
+        <i id="theme-icon" class="fas fa-moon text-blue-600 dark:text-yellow-400 text-xl"></i>
     </button>
 
     <!-- Hero Section -->
-    <header class="relative overflow-hidden h-screen flex items-center justify-center gradient-bg transition-colors duration-500">
-        <div class="absolute inset-0 opacity-20">
-            <svg class="h-full w-full" preserveAspectRatio="none" viewBox="0 0 100 100">
-                <circle cx="10" cy="10" r="15" fill="currentColor" class="text-yellow-400 dark:text-blue-600" />
-                <circle cx="90" cy="80" r="10" fill="currentColor" class="text-lime-300 dark:text-cyan-500" />
-                <rect x="70" y="20" width="20" height="20" rx="5" fill="currentColor" class="text-white dark:text-indigo-600 opacity-30" transform="rotate(15)" />
-            </svg>
+    <header class="relative h-screen flex items-center justify-center hero-space">
+        <!-- Stars Container -->
+        <div id="stars-container" class="absolute inset-0"></div>
+
+        <!-- Atmospheric/Nebula Effects -->
+        <div class="absolute inset-0 pointer-events-none overflow-hidden">
+            <!-- Light Mode Cloud/Glow -->
+            <div class="light:block hidden absolute top-1/4 -left-20 w-[600px] h-[600px] bg-white/40 rounded-full blur-[120px] animate-pulse"></div>
+            <!-- Dark Mode Nebula -->
+            <div class="dark:block hidden absolute top-1/3 right-0 w-[800px] h-[800px] bg-blue-900/20 rounded-full blur-[150px] animate-pulse"></div>
+            <div class="dark:block hidden absolute -bottom-20 -left-20 w-[500px] h-[500px] bg-purple-900/10 rounded-full blur-[130px] animate-pulse" style="animation-delay: 3s"></div>
         </div>
         
         <div class="container mx-auto px-6 relative z-10 text-center">
-            <div class="mb-6">
-                <span class="text-3xl md:text-4xl font-black text-yellow-300 dark:text-cyan-300 tracking-tighter bg-black/30 px-8 py-3 rounded-2xl backdrop-blur-md shadow-xl border border-white/20 inline-block">
-                    남성여자고등학교 최수연
+            <div class="mb-6 animate-float">
+                <span class="text-xs md:text-sm font-bold tracking-[0.5em] uppercase py-2.5 px-8 rounded-full border border-blue-400/30 dark:border-blue-400/30 bg-white/20 dark:bg-blue-900/20 backdrop-blur-xl text-blue-700 dark:text-blue-300">
+                    Analysis Journey 2025
                 </span>
             </div>
 
-            <div class="inline-block px-6 py-2 mb-8 rounded-full border-2 border-white/40 text-sm font-bold text-white bg-black/20 backdrop-blur-md">
-                📊 2025 BIG DATA ANALYSIS PORTFOLIO
+            <div class="mb-2">
+                <h2 class="text-2xl md:text-3xl font-medium tracking-tight text-slate-600 dark:text-slate-400">
+                    남성여자고등학교 <span class="font-black text-slate-900 dark:text-white">최수연</span>
+                </h2>
             </div>
             
-            <h1 class="text-6xl md:text-8xl font-black mb-8 tracking-tighter text-white text-shadow-sm">
-                DATA <span class="text-yellow-300 dark:text-cyan-300">VISION</span>
+            <h1 class="text-7xl md:text-[10rem] font-black mb-10 tracking-tighter leading-none">
+                <span class="light:text-blue-600 dark:text-white">DATA</span><br>
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-blue-700 dark:from-sky-300 dark:to-indigo-400">VISION</span>
             </h1>
-            <p class="text-xl md:text-2xl mb-12 text-white dark:text-blue-50 max-w-3xl mx-auto leading-relaxed font-medium drop-shadow-md">
-                복잡한 데이터 속에서 세상을 바꾸는 <span class="text-yellow-200 dark:text-cyan-200 border-b-2 border-yellow-300">핵심 인사이트</span>를 찾아내는<br class="hidden md:block"> 최수연의 데이터 분석 여정을 소개합니다.
+
+            <p class="text-lg md:text-2xl mb-14 text-slate-600 dark:text-slate-300 max-w-2xl mx-auto leading-relaxed font-medium">
+                무한한 가능성이 펼쳐진 데이터의 세계에서<br class="md:hidden"> 가치 있는 <span class="relative inline-block"><span class="relative z-10 text-blue-600 dark:text-sky-300">인사이트</span><span class="absolute bottom-1 left-0 w-full h-3 bg-blue-100 dark:bg-blue-900/50 -z-10"></span></span>를 포착합니다.
             </p>
-            <a href="#projects" class="bg-yellow-400 dark:bg-blue-600 hover:bg-yellow-300 dark:hover:bg-blue-500 text-yellow-950 dark:text-white font-black py-5 px-14 rounded-2xl text-xl shadow-[0_8px_0_0_#ca8a04] dark:shadow-[0_8px_0_0_#1e40af] active:shadow-none active:translate-y-1 transition-all inline-block">
-                프로젝트 탐색하기 <i class="fas fa-chevron-down ml-2"></i>
+
+            <a href="#projects" class="group relative bg-slate-900 dark:bg-white text-white dark:text-slate-950 font-bold py-5 px-16 rounded-full text-lg overflow-hidden transition-all hover:shadow-[0_0_40px_rgba(56,189,248,0.3)] active:scale-95">
+                <span class="relative z-10 flex items-center">
+                    프로젝트 탐색 <i class="fas fa-arrow-right ml-3 group-hover:translate-x-2 transition-transform"></i>
+                </span>
             </a>
+        </div>
+
+        <!-- Scroll Indicator -->
+        <div class="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 opacity-40">
+            <span class="text-[10px] font-bold tracking-widest uppercase text-slate-500 dark:text-slate-400">Scroll</span>
+            <div class="w-[1px] h-12 bg-gradient-to-b from-slate-400 dark:from-slate-600 to-transparent"></div>
         </div>
     </header>
 
     <!-- Projects Section -->
-    <section id="projects" class="py-32 bg-white dark:bg-slate-900 transition-colors duration-500">
+    <section id="projects" class="py-32 bg-slate-50 dark:bg-slate-900 transition-colors duration-500">
         <div class="container mx-auto px-6">
-            <div class="flex flex-col md:flex-row justify-between items-end mb-20 border-b border-slate-100 dark:border-slate-800 pb-12">
+            <div class="flex flex-col md:flex-row justify-between items-end mb-24 gap-8">
                 <div class="max-w-xl">
-                    <span class="text-green-600 dark:text-blue-400 font-black tracking-widest uppercase mb-2 block text-lg">The Gallery</span>
-                    <h2 class="text-5xl font-black text-slate-900 dark:text-white mb-4 leading-tight">분석 프로젝트 결과물</h2>
-                    <div class="h-3 w-32 bg-yellow-400 dark:bg-blue-500 rounded-full"></div>
+                    <h2 class="text-5xl font-black text-slate-900 dark:text-white mb-6 leading-tight">분석 결과 리포트</h2>
+                    <p class="text-slate-500 dark:text-slate-400 text-lg font-medium">사회 현상부터 문화 콘텐츠까지, 데이터를 통해 들여다본 6가지 세상의 단면입니다.</p>
                 </div>
-                <div class="mt-8 md:mt-0 text-right">
-                    <p class="text-slate-600 dark:text-slate-400 text-xl font-bold italic mb-1">"데이터는 거짓말을 하지 않는다"</p>
-                    <p class="text-slate-400 dark:text-slate-500 font-medium">남성여고 최수연의 6가지 심층 분석</p>
+                <div class="h-[2px] flex-grow bg-slate-200 dark:bg-slate-800 mx-8 hidden md:block mb-6"></div>
+                <div class="flex items-center gap-4 mb-4">
+                    <span class="w-12 h-12 rounded-full border border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-400"><i class="fas fa-th-large"></i></span>
+                    <span class="text-slate-400 font-bold tracking-tighter">TOTAL 06</span>
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 
                 <!-- Project 01 -->
                 <a href="01.html" class="group">
-                    <div class="bg-white dark:bg-slate-800 rounded-[2rem] overflow-hidden card-hover flex flex-col h-full shadow-sm">
-                        <div class="h-56 bg-green-500 dark:bg-blue-600 flex items-center justify-center relative">
-                            <i class="fas fa-car-side text-7xl text-white drop-shadow-lg group-hover:scale-110 transition-transform"></i>
-                            <div class="absolute top-6 left-6 bg-black text-white px-4 py-1 rounded-full text-xs font-black">#01 TRAFFIC</div>
+                    <div class="bg-white dark:bg-slate-800 rounded-3xl overflow-hidden card-hover h-full flex flex-col shadow-sm border border-slate-100 dark:border-slate-700">
+                        <div class="h-64 bg-slate-50 dark:bg-slate-900 flex items-center justify-center relative overflow-hidden">
+                            <i class="fas fa-car-side text-6xl text-blue-500 opacity-80 group-hover:scale-125 transition-transform duration-700"></i>
+                            <div class="absolute inset-0 bg-blue-500/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
                         </div>
-                        <div class="p-10">
-                            <h3 class="text-2xl font-black mb-4 text-slate-900 dark:text-blue-200">가해운전자 경력별 사고 분석</h3>
-                            <p class="text-slate-600 dark:text-slate-400 mb-8 leading-relaxed font-medium">운전 숙련도가 실제 사고 발생 빈도에 미치는 영향력을 통계적으로 규명했습니다.</p>
-                            <span class="text-green-700 dark:text-blue-400 font-black flex items-center group-hover:gap-4 transition-all">
-                                자세히 보기 <i class="fas fa-arrow-right ml-2"></i>
-                            </span>
+                        <div class="p-8">
+                            <span class="text-[10px] font-black text-blue-500 tracking-[0.2em] uppercase mb-3 block">Traffic Analysis</span>
+                            <h3 class="text-2xl font-black mb-4 text-slate-900 dark:text-white">가해운전자 경력별 사고 분석</h3>
+                            <p class="text-slate-500 dark:text-slate-400 mb-8 leading-relaxed text-sm">운전 숙련도가 실제 사고 발생 빈도에 미치는 상관관계를 데이터로 입증했습니다.</p>
+                            <div class="flex items-center text-slate-900 dark:text-white font-bold text-sm">
+                                View Case Study <i class="fas fa-chevron-right ml-2 text-[10px] group-hover:translate-x-1 transition-transform"></i>
+                            </div>
                         </div>
                     </div>
                 </a>
 
                 <!-- Project 02 -->
                 <a href="02.html" class="group">
-                    <div class="bg-white dark:bg-slate-800 rounded-[2rem] overflow-hidden card-hover flex flex-col h-full shadow-sm">
-                        <div class="h-56 bg-yellow-500 dark:bg-cyan-600 flex items-center justify-center relative">
-                            <i class="fas fa-thermometer-half text-7xl text-white drop-shadow-lg group-hover:scale-110 transition-transform"></i>
-                            <div class="absolute top-6 left-6 bg-black text-white px-4 py-1 rounded-full text-xs font-black">#02 CLIMATE</div>
+                    <div class="bg-white dark:bg-slate-800 rounded-3xl overflow-hidden card-hover h-full flex flex-col shadow-sm border border-slate-100 dark:border-slate-700">
+                        <div class="h-64 bg-slate-50 dark:bg-slate-900 flex items-center justify-center relative overflow-hidden">
+                            <i class="fas fa-cloud-sun text-6xl text-sky-400 opacity-80 group-hover:scale-125 transition-transform duration-700"></i>
+                            <div class="absolute inset-0 bg-sky-400/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
                         </div>
-                        <div class="p-10">
-                            <h3 class="text-2xl font-black mb-4 text-slate-900 dark:text-cyan-200">지구 온난화 가속도 분석</h3>
-                            <p class="text-slate-600 dark:text-slate-400 mb-8 leading-relaxed font-medium">기온 변화 추이 데이터를 통해 환경 위기의 심각성을 데이터로 증명했습니다.</p>
-                            <span class="text-yellow-600 dark:text-cyan-400 font-black flex items-center group-hover:gap-4 transition-all">
-                                자세히 보기 <i class="fas fa-arrow-right ml-2"></i>
-                            </span>
+                        <div class="p-8">
+                            <span class="text-[10px] font-black text-sky-500 tracking-[0.2em] uppercase mb-3 block">Environment</span>
+                            <h3 class="text-2xl font-black mb-4 text-slate-900 dark:text-white">지구 온난화 가속도 분석</h3>
+                            <p class="text-slate-500 dark:text-slate-400 mb-8 leading-relaxed text-sm">전 지구적 기온 변화 데이터를 시계열 분석하여 환경 변화의 속도를 추적했습니다.</p>
+                            <div class="flex items-center text-slate-900 dark:text-white font-bold text-sm">
+                                View Case Study <i class="fas fa-chevron-right ml-2 text-[10px] group-hover:translate-x-1 transition-transform"></i>
+                            </div>
                         </div>
                     </div>
                 </a>
 
                 <!-- Project 03 -->
                 <a href="03.html" class="group">
-                    <div class="bg-white dark:bg-slate-800 rounded-[2rem] overflow-hidden card-hover flex flex-col h-full shadow-sm">
-                        <div class="h-56 bg-emerald-600 dark:bg-indigo-600 flex items-center justify-center relative">
-                            <i class="fas fa-chart-line text-7xl text-white drop-shadow-lg group-hover:scale-110 transition-transform"></i>
-                            <div class="absolute top-6 left-6 bg-black text-white px-4 py-1 rounded-full text-xs font-black">#03 ECONOMY</div>
+                    <div class="bg-white dark:bg-slate-800 rounded-3xl overflow-hidden card-hover h-full flex flex-col shadow-sm border border-slate-100 dark:border-slate-700">
+                        <div class="h-64 bg-slate-50 dark:bg-slate-900 flex items-center justify-center relative overflow-hidden">
+                            <i class="fas fa-wallet text-6xl text-indigo-500 opacity-80 group-hover:scale-125 transition-transform duration-700"></i>
+                            <div class="absolute inset-0 bg-indigo-500/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
                         </div>
-                        <div class="p-10">
-                            <h3 class="text-2xl font-black mb-4 text-slate-900 dark:text-indigo-200">소득 분포 및 소득 통계 분석</h3>
-                            <p class="text-slate-600 dark:text-slate-400 mb-8 leading-relaxed font-medium">평균소득과 중위소득의 차이를 통해 사회 경제적 격차를 날카롭게 파고듭니다.</p>
-                            <span class="text-emerald-700 dark:text-indigo-400 font-black flex items-center group-hover:gap-4 transition-all">
-                                자세히 보기 <i class="fas fa-arrow-right ml-2"></i>
-                            </span>
+                        <div class="p-8">
+                            <span class="text-[10px] font-black text-indigo-500 tracking-[0.2em] uppercase mb-3 block">Economy</span>
+                            <h3 class="text-2xl font-black mb-4 text-slate-900 dark:text-white">소득 분포 데이터 분석</h3>
+                            <p class="text-slate-500 dark:text-slate-400 mb-8 leading-relaxed text-sm">가계 소득 데이터를 통해 사회적 소득 격차의 현주소를 정밀하게 분석했습니다.</p>
+                            <div class="flex items-center text-slate-900 dark:text-white font-bold text-sm">
+                                View Case Study <i class="fas fa-chevron-right ml-2 text-[10px] group-hover:translate-x-1 transition-transform"></i>
+                            </div>
                         </div>
                     </div>
                 </a>
 
-                <!-- Project 04 (Highlight) -->
-                <a href="04.html" class="group lg:col-span-2">
-                    <div class="bg-lime-500 dark:bg-blue-900 rounded-[2.5rem] overflow-hidden card-hover border-none flex flex-col md:flex-row h-full shadow-lg">
-                        <div class="md:w-1/2 bg-yellow-400 dark:bg-blue-800 flex items-center justify-center p-16">
-                            <i class="fas fa-university text-9xl text-white/60 dark:text-blue-300/40 animate-spin-slow"></i>
+                <!-- Project 04 -->
+                <a href="04.html" class="group">
+                    <div class="bg-white dark:bg-slate-800 rounded-3xl overflow-hidden card-hover h-full flex flex-col shadow-sm border border-slate-100 dark:border-slate-700">
+                        <div class="h-64 bg-slate-50 dark:bg-slate-900 flex items-center justify-center relative overflow-hidden">
+                            <i class="fas fa-graduation-cap text-6xl text-slate-400 group-hover:scale-125 transition-transform duration-700"></i>
                         </div>
-                        <div class="p-12 md:p-16 flex flex-col justify-center bg-white dark:bg-blue-900">
-                            <div class="inline-block w-fit px-4 py-1 mb-6 rounded-lg text-sm font-black bg-yellow-500 dark:bg-blue-500 text-white uppercase tracking-tighter">Main Project</div>
-                            <h3 class="text-4xl font-black mb-6 text-slate-900 dark:text-white leading-tight underline decoration-yellow-400 decoration-4 underline-offset-8">기계공학부 3개대학<br>비교 분석 프로젝트</h3>
-                            <p class="text-slate-700 dark:text-blue-100 mb-10 text-xl font-medium">각 대학의 인프라와 성과 데이터를 통합 분석하여 학문적 경쟁력을 한눈에 비교했습니다.</p>
-                            <div class="flex items-center text-green-700 dark:text-cyan-300 font-black text-2xl border-b-4 border-yellow-400 dark:border-blue-400 w-fit pb-2">
-                                분석 결과 확인 <i class="fas fa-external-link-alt ml-4"></i>
+                        <div class="p-8">
+                            <span class="text-[10px] font-black text-slate-400 tracking-[0.2em] uppercase mb-3 block">Education</span>
+                            <h3 class="text-2xl font-black mb-4 text-slate-900 dark:text-white">기계공학부 3개대학 분석</h3>
+                            <p class="text-slate-500 dark:text-slate-400 mb-8 leading-relaxed text-sm">주요 대학 기계공학부의 인프라와 지표를 다각도로 비교 분석했습니다.</p>
+                            <div class="flex items-center text-slate-900 dark:text-white font-bold text-sm">
+                                View Case Study <i class="fas fa-chevron-right ml-2 text-[10px] group-hover:translate-x-1 transition-transform"></i>
                             </div>
                         </div>
                     </div>
@@ -208,34 +258,34 @@
 
                 <!-- Project 05 -->
                 <a href="05.html" class="group">
-                    <div class="bg-white dark:bg-slate-800 rounded-[2rem] overflow-hidden card-hover flex flex-col h-full shadow-sm">
-                        <div class="h-56 bg-pink-500 dark:bg-pink-700 flex items-center justify-center relative">
-                            <i class="fas fa-music text-7xl text-white drop-shadow-lg group-hover:scale-110 transition-transform"></i>
-                            <div class="absolute top-6 left-6 bg-black text-white px-4 py-1 rounded-full text-xs font-black">#05 K-POP</div>
+                    <div class="bg-white dark:bg-slate-800 rounded-3xl overflow-hidden card-hover h-full flex flex-col shadow-sm border border-slate-100 dark:border-slate-700">
+                        <div class="h-64 bg-slate-50 dark:bg-slate-900 flex items-center justify-center relative overflow-hidden">
+                            <i class="fab fa-youtube text-6xl text-red-500 group-hover:scale-125 transition-transform duration-700"></i>
                         </div>
-                        <div class="p-10">
-                            <h3 class="text-2xl font-black mb-4 text-slate-900 dark:text-pink-200">케이팝데몬헌터스 댓글 분석</h3>
-                            <p class="text-slate-600 dark:text-slate-400 mb-8 leading-relaxed font-medium">유튜브 채널의 댓글 데이터를 수집하여 팬덤의 반응과 키워드를 분석했습니다.</p>
-                            <span class="text-pink-600 dark:text-pink-400 font-black flex items-center group-hover:gap-4 transition-all">
-                                자세히 보기 <i class="fas fa-arrow-right ml-2"></i>
-                            </span>
+                        <div class="p-8">
+                            <span class="text-[10px] font-black text-red-500 tracking-[0.2em] uppercase mb-3 block">Media Analysis</span>
+                            <h3 class="text-2xl font-black mb-4 text-slate-900 dark:text-white">케이팝데몬헌터스 분석</h3>
+                            <p class="text-slate-500 dark:text-slate-400 mb-8 leading-relaxed text-sm">유튜브 팬덤의 댓글과 반응 데이터를 크롤링하여 트렌드를 분석했습니다.</p>
+                            <div class="flex items-center text-slate-900 dark:text-white font-bold text-sm">
+                                View Case Study <i class="fas fa-chevron-right ml-2 text-[10px] group-hover:translate-x-1 transition-transform"></i>
+                            </div>
                         </div>
                     </div>
                 </a>
 
-                <!-- Project 06 (New) -->
+                <!-- Project 06 -->
                 <a href="06.html" class="group">
-                    <div class="bg-slate-900 dark:bg-black rounded-[2rem] overflow-hidden card-hover border-none flex flex-col h-full shadow-xl">
-                        <div class="h-56 bg-red-600 flex items-center justify-center relative">
-                            <i class="fab fa-youtube text-8xl text-white drop-shadow-2xl group-hover:scale-110 transition-transform"></i>
-                            <div class="absolute top-6 left-6 bg-white text-black px-4 py-1 rounded-full text-xs font-black">#06 AI ETHICS</div>
+                    <div class="bg-white dark:bg-slate-800 rounded-3xl overflow-hidden card-hover h-full flex flex-col shadow-sm border border-slate-100 dark:border-slate-700">
+                        <div class="h-64 bg-slate-50 dark:bg-slate-900 flex items-center justify-center relative overflow-hidden">
+                            <i class="fas fa-microchip text-6xl text-purple-500 group-hover:scale-125 transition-transform duration-700"></i>
                         </div>
-                        <div class="p-10">
-                            <h3 class="text-2xl font-black mb-4 text-white">AI 윤리 유튜브 분석</h3>
-                            <p class="text-slate-400 dark:text-slate-500 mb-8 leading-relaxed font-medium">인공지능 윤리에 대한 유튜브 담론을 시각화하고 대중적 인식 변화를 추적했습니다.</p>
-                            <span class="text-yellow-400 dark:text-blue-400 font-black flex items-center group-hover:gap-4 transition-all">
-                                자세히 보기 <i class="fas fa-arrow-right ml-2"></i>
-                            </span>
+                        <div class="p-8">
+                            <span class="text-[10px] font-black text-purple-500 tracking-[0.2em] uppercase mb-3 block">AI Ethics</span>
+                            <h3 class="text-2xl font-black mb-4 text-slate-900 dark:text-white">AI 윤리 유튜브 담론 분석</h3>
+                            <p class="text-slate-500 dark:text-slate-400 mb-8 leading-relaxed text-sm">인공지능 윤리에 대한 대중의 관심사와 주요 쟁점을 데이터로 정리했습니다.</p>
+                            <div class="flex items-center text-slate-900 dark:text-white font-bold text-sm">
+                                View Case Study <i class="fas fa-chevron-right ml-2 text-[10px] group-hover:translate-x-1 transition-transform"></i>
+                            </div>
                         </div>
                     </div>
                 </a>
@@ -245,25 +295,45 @@
     </section>
 
     <!-- Footer -->
-    <footer class="bg-slate-900 py-24 text-white transition-colors duration-500">
+    <footer class="bg-white dark:bg-slate-950 py-24 border-t border-slate-100 dark:border-slate-900 transition-colors">
         <div class="container mx-auto px-6 text-center">
-            <h2 class="text-4xl font-black mb-6 text-yellow-400 dark:text-blue-400 italic tracking-tighter">DATA DRIVEN FUTURE</h2>
-            <div class="mb-12">
-                <p class="text-3xl font-black text-white mb-2">남성여자고등학교 최수연</p>
-                <p class="text-slate-400 font-medium tracking-widest">BIG DATA ANALYSIS SPECIALIST PORTFOLIO</p>
+            <h2 class="text-2xl font-black mb-10 text-slate-900 dark:text-white tracking-widest uppercase">Connectivity</h2>
+            <div class="flex justify-center space-x-4 mb-16">
+                <a href="#" class="w-16 h-16 rounded-3xl flex items-center justify-center border border-slate-200 dark:border-slate-800 hover:bg-slate-900 dark:hover:bg-white hover:text-white dark:hover:text-slate-900 transition-all transform hover:-translate-y-2"><i class="fab fa-github text-2xl"></i></a>
+                <a href="#" class="w-16 h-16 rounded-3xl flex items-center justify-center border border-slate-200 dark:border-slate-800 hover:bg-blue-500 hover:text-white transition-all transform hover:-translate-y-2"><i class="fas fa-envelope text-2xl"></i></a>
             </div>
-            <div class="flex justify-center space-x-10 mb-16">
-                <a href="#" class="w-16 h-16 bg-white/5 rounded-2xl flex items-center justify-center hover:bg-yellow-400 hover:text-black transition-all transform hover:-translate-y-2"><i class="fab fa-github text-3xl"></i></a>
-                <a href="#" class="w-16 h-16 bg-white/5 rounded-2xl flex items-center justify-center hover:bg-green-500 hover:text-black transition-all transform hover:-translate-y-2"><i class="fas fa-envelope text-3xl"></i></a>
-                <a href="#" class="w-16 h-16 bg-white/5 rounded-2xl flex items-center justify-center hover:bg-blue-500 hover:text-white transition-all transform hover:-translate-y-2"><i class="fab fa-linkedin text-3xl"></i></a>
-            </div>
-            <div class="pt-8 border-t border-white/10">
-                <p class="text-slate-500 font-bold opacity-60 uppercase tracking-widest text-sm">© 2025 PORTFOLIO : Choi Su-yeon. All Data Verified.</p>
-            </div>
+            <p class="text-slate-400 dark:text-slate-600 text-[10px] font-bold uppercase tracking-[0.3em]">© 2025 PORTFOLIO BY CHOI SU-YEON. ALL DATA EXPLORED.</p>
         </div>
     </footer>
 
     <script>
+        function createStars() {
+            const container = document.getElementById('stars-container');
+            container.innerHTML = '';
+            const isDark = document.documentElement.classList.contains('dark');
+            const starCount = isDark ? 150 : 80;
+
+            for (let i = 0; i < starCount; i++) {
+                const star = document.createElement('div');
+                star.className = 'star animate-twinkle';
+                
+                // Randomize star size
+                const size = isDark ? Math.random() * 2 + 1 : Math.random() * 3 + 1;
+                star.style.width = `${size}px`;
+                star.style.height = `${size}px`;
+                
+                // Randomize position
+                star.style.top = `${Math.random() * 100}%`;
+                star.style.left = `${Math.random() * 100}%`;
+                
+                // Randomize animation delay
+                star.style.animationDelay = `${Math.random() * 5}s`;
+                star.style.animationDuration = `${Math.random() * 3 + 2}s`;
+                
+                container.appendChild(star);
+            }
+        }
+
         function toggleTheme() {
             const html = document.documentElement;
             const icon = document.getElementById('theme-icon');
@@ -271,31 +341,35 @@
             if (html.classList.contains('light')) {
                 html.classList.remove('light');
                 html.classList.add('dark');
-                icon.classList.remove('fa-moon');
-                icon.classList.add('fa-sun');
+                icon.className = 'fas fa-sun text-yellow-400 text-xl';
             } else {
                 html.classList.remove('dark');
                 html.classList.add('light');
-                icon.classList.remove('fa-sun');
-                icon.classList.add('fa-moon');
+                icon.className = 'fas fa-moon text-blue-600 text-xl';
             }
+            createStars();
         }
 
-        document.addEventListener('DOMContentLoaded', function() {
-            const observerOptions = { threshold: 0.1 };
+        document.addEventListener('DOMContentLoaded', () => {
+            createStars();
+            
+            // Intersection Observer for scroll animations
             const observer = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
                         entry.target.classList.add('opacity-100', 'translate-y-0');
                     }
                 });
-            }, observerOptions);
+            }, { threshold: 0.1 });
 
             document.querySelectorAll('.group').forEach(el => {
-                el.classList.add('transition-all', 'duration-1000', 'opacity-0', 'translate-y-20');
+                el.classList.add('transition-all', 'duration-1000', 'opacity-0', 'translate-y-12');
                 observer.observe(el);
             });
         });
+
+        // Re-generate stars on window resize to maintain density
+        window.addEventListener('resize', createStars);
     </script>
 </body>
 </html>
